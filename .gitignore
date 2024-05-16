@@ -19,5 +19,8 @@
 
 # GOBIN
 bin
+
+# local go mod cache
+.pkg
 # Go workspace file
 go.work
