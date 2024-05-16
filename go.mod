@@ -2,4 +2,9 @@ module iefhong/go-starter
 
 go 1.14
 
-require github.com/rubenv/sql-migrate v0.0.0-20200212082348-64f95ea68aa3
+require (
+	github.com/gobuffalo/packr/v2 v2.7.1 // indirect
+	github.com/rubenv/sql-migrate v1.6.1
+	github.com/ziutek/mymysql v1.5.4 // indirect
+	gopkg.in/gorp.v1 v1.7.2 // indirect
+)
