@@ -1,4 +1,4 @@
-module iefhong/go-starter
+module iefhong/aw/go-starter
 
 go 1.14
 
