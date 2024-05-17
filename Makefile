@@ -3,7 +3,8 @@ download:
 	@go mod download
 build: format
 	go build -o bin/app	
-
+	go vet
+	
 format:
 	go fmt
 	find ${PWD} -name ".*" -prune -o -type f -iname "*.sql" -print | xargs -i pg_format {} -o {}
