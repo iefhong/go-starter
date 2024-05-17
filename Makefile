@@ -1,8 +1,12 @@
 download:
 	@echo Downloading go.mod dependencies...
 	@go mod download
-build:
+build: format
 	go build -o bin/app	
+
+format:
+	go fmt
+	find ${PWD} -name ".*" -prune -o -type f -iname "*.sql" -print | xargs -i pg_format {} -o {}
 
 init: modules tools tidy build
 	@go version
