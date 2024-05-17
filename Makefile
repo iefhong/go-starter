@@ -2,9 +2,10 @@ download:
 	@echo Downloading go.mod dependencies...
 	@go mod download
 build: format
+	go generate
 	go build -o bin/app	
 	go vet
-	
+
 format:
 	go fmt
 	find ${PWD} -name ".*" -prune -o -type f -iname "*.sql" -print | xargs -i pg_format {} -o {}
