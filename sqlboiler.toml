@@ -9,4 +9,12 @@
     # port = PSQL_PORT
     # sslmode = PSQL_SSLMODE
     # schema = PSQL_SCHEMA
+  dbname = "sample"
+  host   = "192.168.124.13"
+  port   = 5432
+  user   = "dbuser"
+  pass   = "9bed16f749d74a3c8bfbced18a7647f5"
+  sslmode = "disable"
+  schema = "public"
+     
     blacklist = ["migrations"]

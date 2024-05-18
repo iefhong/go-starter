@@ -45,3 +45,4 @@ DROP TABLE languages;
 DROP TABLE jets;
 
 DROP TABLE pilots;
+

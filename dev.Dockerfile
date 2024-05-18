@@ -1,6 +1,10 @@
-# No build here, only dev environment
-FROM golang:1.14
-# EXPOSE 8080
+FROM postgres:12.2-alpine AS database
+
+FROM golang:1.14 AS development
+
+# Copy postgresql-client tools directly from the above image
+COPY --from=database /usr/local/bin \
+    /usr/local/bin/
 
 # https://github.com/go-modules-by-example/index/blob/master/010_tools/README.md#walk-through
 ENV GOBIN /app/bin
@@ -9,9 +13,9 @@ ENV PATH $GOBIN:$PATH
 # Install the same version of pg_formatter as used in your editors, as of 2020-03 thats v4.2
 # https://github.com/darold/pgFormatter/releases
 # https://github.com/bradymholt/vscode-pgFormatter/commits/master
-RUN wget https://github.com/darold/pgFormatter/archive/v5.5.tar.gz \
-    && tar xzf v5.5.tar.gz \
-    && cd pgFormatter-5.5 \
+RUN wget https://github.com/darold/pgFormatter/archive/v4.2.tar.gz \
+    && tar xzf v4.2.tar.gz \
+    && cd pgFormatter-4.2 \
     && perl Makefile.PL \
     && make && make install
 
