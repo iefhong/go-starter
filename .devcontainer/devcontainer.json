@@ -49,7 +49,7 @@
 		"766b.go-outliner",
 		// "windmilleng.vscode-go-autotest",
 		"heaths.vscode-guid",
-		"bungcip.better-toml",
+		"tamasfe.even-better-toml",
 		"eamodio.gitlens",
 		"mtxr.sqltools",
 		// "ckolkman.vscode-postgres"		
