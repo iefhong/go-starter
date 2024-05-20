@@ -90,6 +90,8 @@ type (
 	// LanguageSlice is an alias for a slice of pointers to Language.
 	// This should generally be used opposed to []Language.
 	LanguageSlice []*Language
+	// LanguageHook is the signature for custom Language hook methods
+	LanguageHook func(context.Context, boil.ContextExecutor, *Language) error
 
 	languageQuery struct {
 		*queries.Query
@@ -117,14 +119,174 @@ var (
 	_ = qmhelper.Where
 )
 
-// OneP returns a single language record from the query, and panics on error.
-func (q languageQuery) OneP(ctx context.Context, exec boil.ContextExecutor) *Language {
-	o, err := q.One(ctx, exec)
-	if err != nil {
-		panic(boil.WrapErr(err))
+var languageBeforeInsertHooks []LanguageHook
+var languageBeforeUpdateHooks []LanguageHook
+var languageBeforeDeleteHooks []LanguageHook
+var languageBeforeUpsertHooks []LanguageHook
+
+var languageAfterInsertHooks []LanguageHook
+var languageAfterSelectHooks []LanguageHook
+var languageAfterUpdateHooks []LanguageHook
+var languageAfterDeleteHooks []LanguageHook
+var languageAfterUpsertHooks []LanguageHook
+
+// doBeforeInsertHooks executes all "before insert" hooks.
+func (o *Language) doBeforeInsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
 	}
 
-	return o
+	for _, hook := range languageBeforeInsertHooks {
+		if err := hook(ctx, exec, o); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// doBeforeUpdateHooks executes all "before Update" hooks.
+func (o *Language) doBeforeUpdateHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
+	for _, hook := range languageBeforeUpdateHooks {
+		if err := hook(ctx, exec, o); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// doBeforeDeleteHooks executes all "before Delete" hooks.
+func (o *Language) doBeforeDeleteHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
+	for _, hook := range languageBeforeDeleteHooks {
+		if err := hook(ctx, exec, o); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// doBeforeUpsertHooks executes all "before Upsert" hooks.
+func (o *Language) doBeforeUpsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
+	for _, hook := range languageBeforeUpsertHooks {
+		if err := hook(ctx, exec, o); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// doAfterInsertHooks executes all "after Insert" hooks.
+func (o *Language) doAfterInsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
+	for _, hook := range languageAfterInsertHooks {
+		if err := hook(ctx, exec, o); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// doAfterSelectHooks executes all "after Select" hooks.
+func (o *Language) doAfterSelectHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
+	for _, hook := range languageAfterSelectHooks {
+		if err := hook(ctx, exec, o); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// doAfterUpdateHooks executes all "after Update" hooks.
+func (o *Language) doAfterUpdateHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
+	for _, hook := range languageAfterUpdateHooks {
+		if err := hook(ctx, exec, o); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// doAfterDeleteHooks executes all "after Delete" hooks.
+func (o *Language) doAfterDeleteHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
+	for _, hook := range languageAfterDeleteHooks {
+		if err := hook(ctx, exec, o); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// doAfterUpsertHooks executes all "after Upsert" hooks.
+func (o *Language) doAfterUpsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
+	for _, hook := range languageAfterUpsertHooks {
+		if err := hook(ctx, exec, o); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// AddLanguageHook registers your hook function for all future operations.
+func AddLanguageHook(hookPoint boil.HookPoint, languageHook LanguageHook) {
+	switch hookPoint {
+	case boil.BeforeInsertHook:
+		languageBeforeInsertHooks = append(languageBeforeInsertHooks, languageHook)
+	case boil.BeforeUpdateHook:
+		languageBeforeUpdateHooks = append(languageBeforeUpdateHooks, languageHook)
+	case boil.BeforeDeleteHook:
+		languageBeforeDeleteHooks = append(languageBeforeDeleteHooks, languageHook)
+	case boil.BeforeUpsertHook:
+		languageBeforeUpsertHooks = append(languageBeforeUpsertHooks, languageHook)
+	case boil.AfterInsertHook:
+		languageAfterInsertHooks = append(languageAfterInsertHooks, languageHook)
+	case boil.AfterSelectHook:
+		languageAfterSelectHooks = append(languageAfterSelectHooks, languageHook)
+	case boil.AfterUpdateHook:
+		languageAfterUpdateHooks = append(languageAfterUpdateHooks, languageHook)
+	case boil.AfterDeleteHook:
+		languageAfterDeleteHooks = append(languageAfterDeleteHooks, languageHook)
+	case boil.AfterUpsertHook:
+		languageAfterUpsertHooks = append(languageAfterUpsertHooks, languageHook)
+	}
 }
 
 // One returns a single language record from the query.
@@ -141,17 +303,11 @@ func (q languageQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Lan
 		return nil, errors.Wrap(err, "models: failed to execute a one query for languages")
 	}
 
-	return o, nil
-}
-
-// AllP returns all Language records from the query, and panics on error.
-func (q languageQuery) AllP(ctx context.Context, exec boil.ContextExecutor) LanguageSlice {
-	o, err := q.All(ctx, exec)
-	if err != nil {
-		panic(boil.WrapErr(err))
+	if err := o.doAfterSelectHooks(ctx, exec); err != nil {
+		return o, err
 	}
 
-	return o
+	return o, nil
 }
 
 // All returns all Language records from the query.
@@ -163,17 +319,15 @@ func (q languageQuery) All(ctx context.Context, exec boil.ContextExecutor) (Lang
 		return nil, errors.Wrap(err, "models: failed to assign all query results to Language slice")
 	}
 
-	return o, nil
-}
-
-// CountP returns the count of all Language records in the query, and panics on error.
-func (q languageQuery) CountP(ctx context.Context, exec boil.ContextExecutor) int64 {
-	c, err := q.Count(ctx, exec)
-	if err != nil {
-		panic(boil.WrapErr(err))
+	if len(languageAfterSelectHooks) != 0 {
+		for _, obj := range o {
+			if err := obj.doAfterSelectHooks(ctx, exec); err != nil {
+				return o, err
+			}
+		}
 	}
 
-	return c
+	return o, nil
 }
 
 // Count returns the count of all Language records in the query.
@@ -189,16 +343,6 @@ func (q languageQuery) Count(ctx context.Context, exec boil.ContextExecutor) (in
 	}
 
 	return count, nil
-}
-
-// ExistsP checks if the row exists in the table, and panics on error.
-func (q languageQuery) ExistsP(ctx context.Context, exec boil.ContextExecutor) bool {
-	e, err := q.Exists(ctx, exec)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return e
 }
 
 // Exists checks if the row exists in the table.
@@ -299,6 +443,13 @@ func (languageL) LoadPilotLanguages(ctx context.Context, e boil.ContextExecutor,
 		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for pilot_languages")
 	}
 
+	if len(pilotLanguageAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
 	if singular {
 		object.R.PilotLanguages = resultSlice
 		for _, foreign := range resultSlice {
@@ -324,17 +475,6 @@ func (languageL) LoadPilotLanguages(ctx context.Context, e boil.ContextExecutor,
 	}
 
 	return nil
-}
-
-// AddPilotLanguagesP adds the given related objects to the existing relationships
-// of the language, optionally inserting them as new records.
-// Appends related to o.R.PilotLanguages.
-// Sets related.R.Language appropriately.
-// Panics on error.
-func (o *Language) AddPilotLanguagesP(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*PilotLanguage) {
-	if err := o.AddPilotLanguages(ctx, exec, insert, related...); err != nil {
-		panic(boil.WrapErr(err))
-	}
 }
 
 // AddPilotLanguages adds the given related objects to the existing relationships
@@ -396,16 +536,6 @@ func Languages(mods ...qm.QueryMod) languageQuery {
 	return languageQuery{NewQuery(mods...)}
 }
 
-// FindLanguageP retrieves a single record by ID with an executor, and panics on error.
-func FindLanguageP(ctx context.Context, exec boil.ContextExecutor, iD string, selectCols ...string) *Language {
-	retobj, err := FindLanguage(ctx, exec, iD, selectCols...)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return retobj
-}
-
 // FindLanguage retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindLanguage(ctx context.Context, exec boil.ContextExecutor, iD string, selectCols ...string) (*Language, error) {
@@ -432,14 +562,6 @@ func FindLanguage(ctx context.Context, exec boil.ContextExecutor, iD string, sel
 	return languageObj, nil
 }
 
-// InsertP a single record using an executor, and panics on error. See Insert
-// for whitelist behavior description.
-func (o *Language) InsertP(ctx context.Context, exec boil.ContextExecutor, columns boil.Columns) {
-	if err := o.Insert(ctx, exec, columns); err != nil {
-		panic(boil.WrapErr(err))
-	}
-}
-
 // Insert a single record using an executor.
 // See boil.Columns.InsertColumnSet documentation to understand column list inference for inserts.
 func (o *Language) Insert(ctx context.Context, exec boil.ContextExecutor, columns boil.Columns) error {
@@ -457,6 +579,10 @@ func (o *Language) Insert(ctx context.Context, exec boil.ContextExecutor, column
 		if queries.MustTime(o.UpdatedAt).IsZero() {
 			queries.SetScanner(&o.UpdatedAt, currTime)
 		}
+	}
+
+	if err := o.doBeforeInsertHooks(ctx, exec); err != nil {
+		return err
 	}
 
 	nzDefaults := queries.NonZeroDefaultSet(languageColumnsWithDefault, o)
@@ -522,18 +648,7 @@ func (o *Language) Insert(ctx context.Context, exec boil.ContextExecutor, column
 		languageInsertCacheMut.Unlock()
 	}
 
-	return nil
-}
-
-// UpdateP uses an executor to update the Language, and panics on error.
-// See Update for more documentation.
-func (o *Language) UpdateP(ctx context.Context, exec boil.ContextExecutor, columns boil.Columns) int64 {
-	rowsAff, err := o.Update(ctx, exec, columns)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return rowsAff
+	return o.doAfterInsertHooks(ctx, exec)
 }
 
 // Update uses an executor to update the Language.
@@ -547,6 +662,9 @@ func (o *Language) Update(ctx context.Context, exec boil.ContextExecutor, column
 	}
 
 	var err error
+	if err = o.doBeforeUpdateHooks(ctx, exec); err != nil {
+		return 0, err
+	}
 	key := makeCacheKey(columns, nil)
 	languageUpdateCacheMut.RLock()
 	cache, cached := languageUpdateCache[key]
@@ -599,17 +717,7 @@ func (o *Language) Update(ctx context.Context, exec boil.ContextExecutor, column
 		languageUpdateCacheMut.Unlock()
 	}
 
-	return rowsAff, nil
-}
-
-// UpdateAllP updates all rows with matching column names, and panics on error.
-func (q languageQuery) UpdateAllP(ctx context.Context, exec boil.ContextExecutor, cols M) int64 {
-	rowsAff, err := q.UpdateAll(ctx, exec, cols)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return rowsAff
+	return rowsAff, o.doAfterUpdateHooks(ctx, exec)
 }
 
 // UpdateAll updates all rows with the specified column values.
@@ -627,16 +735,6 @@ func (q languageQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor,
 	}
 
 	return rowsAff, nil
-}
-
-// UpdateAllP updates all rows with the specified column values, and panics on error.
-func (o LanguageSlice) UpdateAllP(ctx context.Context, exec boil.ContextExecutor, cols M) int64 {
-	rowsAff, err := o.UpdateAll(ctx, exec, cols)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return rowsAff
 }
 
 // UpdateAll updates all rows with the specified column values, using an executor.
@@ -687,14 +785,6 @@ func (o LanguageSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor,
 	return rowsAff, nil
 }
 
-// UpsertP attempts an insert using an executor, and does an update or ignore on conflict.
-// UpsertP panics on error.
-func (o *Language) UpsertP(ctx context.Context, exec boil.ContextExecutor, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) {
-	if err := o.Upsert(ctx, exec, updateOnConflict, conflictColumns, updateColumns, insertColumns); err != nil {
-		panic(boil.WrapErr(err))
-	}
-}
-
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
 // See boil.Columns documentation for how to properly use updateColumns and insertColumns.
 func (o *Language) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
@@ -708,6 +798,10 @@ func (o *Language) Upsert(ctx context.Context, exec boil.ContextExecutor, update
 			o.CreatedAt = currTime
 		}
 		queries.SetScanner(&o.UpdatedAt, currTime)
+	}
+
+	if err := o.doBeforeUpsertHooks(ctx, exec); err != nil {
+		return err
 	}
 
 	nzDefaults := queries.NonZeroDefaultSet(languageColumnsWithDefault, o)
@@ -811,19 +905,7 @@ func (o *Language) Upsert(ctx context.Context, exec boil.ContextExecutor, update
 		languageUpsertCacheMut.Unlock()
 	}
 
-	return nil
-}
-
-// DeleteP deletes a single Language record with an executor.
-// DeleteP will match against the primary key column to find the record to delete.
-// Panics on error.
-func (o *Language) DeleteP(ctx context.Context, exec boil.ContextExecutor) int64 {
-	rowsAff, err := o.Delete(ctx, exec)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return rowsAff
+	return o.doAfterUpsertHooks(ctx, exec)
 }
 
 // Delete deletes a single Language record with an executor.
@@ -831,6 +913,10 @@ func (o *Language) DeleteP(ctx context.Context, exec boil.ContextExecutor) int64
 func (o *Language) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
 		return 0, errors.New("models: no Language provided for delete")
+	}
+
+	if err := o.doBeforeDeleteHooks(ctx, exec); err != nil {
+		return 0, err
 	}
 
 	args := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(o)), languagePrimaryKeyMapping)
@@ -851,17 +937,11 @@ func (o *Language) Delete(ctx context.Context, exec boil.ContextExecutor) (int64
 		return 0, errors.Wrap(err, "models: failed to get rows affected by delete for languages")
 	}
 
-	return rowsAff, nil
-}
-
-// DeleteAllP deletes all rows, and panics on error.
-func (q languageQuery) DeleteAllP(ctx context.Context, exec boil.ContextExecutor) int64 {
-	rowsAff, err := q.DeleteAll(ctx, exec)
-	if err != nil {
-		panic(boil.WrapErr(err))
+	if err := o.doAfterDeleteHooks(ctx, exec); err != nil {
+		return 0, err
 	}
 
-	return rowsAff
+	return rowsAff, nil
 }
 
 // DeleteAll deletes all matching rows.
@@ -885,20 +965,18 @@ func (q languageQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor)
 	return rowsAff, nil
 }
 
-// DeleteAllP deletes all rows in the slice, using an executor, and panics on error.
-func (o LanguageSlice) DeleteAllP(ctx context.Context, exec boil.ContextExecutor) int64 {
-	rowsAff, err := o.DeleteAll(ctx, exec)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return rowsAff
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o LanguageSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if len(o) == 0 {
 		return 0, nil
+	}
+
+	if len(languageBeforeDeleteHooks) != 0 {
+		for _, obj := range o {
+			if err := obj.doBeforeDeleteHooks(ctx, exec); err != nil {
+				return 0, err
+			}
+		}
 	}
 
 	var args []interface{}
@@ -925,14 +1003,15 @@ func (o LanguageSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor)
 		return 0, errors.Wrap(err, "models: failed to get rows affected by deleteall for languages")
 	}
 
-	return rowsAff, nil
-}
-
-// ReloadP refetches the object from the database with an executor. Panics on error.
-func (o *Language) ReloadP(ctx context.Context, exec boil.ContextExecutor) {
-	if err := o.Reload(ctx, exec); err != nil {
-		panic(boil.WrapErr(err))
+	if len(languageAfterDeleteHooks) != 0 {
+		for _, obj := range o {
+			if err := obj.doAfterDeleteHooks(ctx, exec); err != nil {
+				return 0, err
+			}
+		}
 	}
+
+	return rowsAff, nil
 }
 
 // Reload refetches the object from the database
@@ -945,15 +1024,6 @@ func (o *Language) Reload(ctx context.Context, exec boil.ContextExecutor) error 
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllP refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-// Panics on error.
-func (o *LanguageSlice) ReloadAllP(ctx context.Context, exec boil.ContextExecutor) {
-	if err := o.ReloadAll(ctx, exec); err != nil {
-		panic(boil.WrapErr(err))
-	}
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -983,16 +1053,6 @@ func (o *LanguageSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor
 	*o = slice
 
 	return nil
-}
-
-// LanguageExistsP checks if the Language row exists. Panics on error.
-func LanguageExistsP(ctx context.Context, exec boil.ContextExecutor, iD string) bool {
-	e, err := LanguageExists(ctx, exec, iD)
-	if err != nil {
-		panic(boil.WrapErr(err))
-	}
-
-	return e
 }
 
 // LanguageExists checks if the Language row exists.
